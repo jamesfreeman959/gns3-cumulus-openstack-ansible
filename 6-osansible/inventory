@@ -1,0 +1,16 @@
+[infra]
+infra1 ansible_host=172.29.236.11
+infra2 ansible_host=172.29.236.12
+infra3 ansible_host=172.29.236.13
+
+[log]
+log1 ansible_host=172.29.236.14
+
+[compute]
+compute1 ansible_host=172.29.236.16
+compute2 ansible_host=172.29.236.17
+
+[osd]
+osd1 ansible_host=172.29.236.18
+osd2 ansible_host=172.29.236.19
+osd3 ansible_host=172.29.236.20

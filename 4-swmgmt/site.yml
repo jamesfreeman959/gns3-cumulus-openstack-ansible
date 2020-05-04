@@ -1,0 +1,13 @@
+---
+- name: Configure swmgmt as a simple layer 2 switch
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Configure swmgmt as a simple layer2 bridge
+      nclu:
+        commands:
+          - add interface swp1-23
+          - add bridge bridge ports swp1-23
+          - add bridge bridge pvid 1
+        commit: true

@@ -1,0 +1,10 @@
+[coreswitches]
+spine01.example.org 
+spine02.example.org 
+leaf01.example.org
+leaf02.example.org
+
+[coreswitches:vars]
+ansible_user=cumulus 
+ansible_password=CumulusLinux! 
+ansible_become_password=CumulusLinux!

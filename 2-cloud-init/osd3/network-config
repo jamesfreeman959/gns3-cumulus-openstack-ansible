@@ -1,0 +1,86 @@
+network:
+  version: 1
+  config:
+    - type: physical
+      name: eth0
+      subnets:
+        - type: dhcp
+    - type: physical
+      name: eth1
+    - type: physical
+      name: eth3
+    - type: bond
+      name: bond0
+      bond_interfaces:
+        - eth1
+        - eth3
+      params:
+        bond-mode: 802.3ad
+        bond-mii-monitor-interval: 100
+        bond-lacp-rate: 1
+        bond-min-links: 1
+        bond-transmit-hash-policy: layer3+4
+    - type: bond
+      name: bond1
+      bond_interfaces:
+        - eth2
+        - eth4
+      params:
+        bond-mode: 802.3ad
+        bond-mii-monitor-interval: 100
+        bond-lacp-rate: 1
+        bond-min-links: 1
+        bond-transmit-hash-policy: layer3+4
+    - type: vlan
+      name: bond0.10
+      vlan_link: bond0
+      vlan_id: 10 
+    - type: vlan
+      name: bond0.20
+      vlan_link: bond0
+      vlan_id: 20  
+    - type: vlan
+      name: bond1.30
+      vlan_link: bond1
+      vlan_id: 30   
+    - type: bridge
+      name: br-mgmt
+      bridge_interfaces:
+        - bond0.10
+      params:
+        bridge_stp: 'off'
+        bridge_waitport: 0
+        bridge_fd: 0
+      subnets:
+        - type: static
+          address: 172.29.236.20/22
+          gateway: 172.29.236.1
+          dns_nameservers:
+            - 192.168.50.1
+    - type: bridge
+      name: br-vxlan
+      bridge_interfaces:
+        - bond1.30
+      params:
+        bridge_stp: 'off'
+        bridge_waitport: 0
+        bridge_fd: 0
+    - type: bridge
+      name: br-vlan
+      bridge_interfaces:
+        - bond1
+      params:
+        bridge_stp: 'off'
+        bridge_waitport: 0
+        bridge_fd: 0
+    - type: bridge
+      name: br-storage
+      bridge_interfaces:
+        - bond0.20
+      params:
+        bridge_stp: 'off'
+        bridge_waitport: 0
+        bridge_fd: 0
+      subnets:
+        - type: static
+          address: 172.29.244.20/22

@@ -1,0 +1,53 @@
+network:
+  version: 1
+  config:
+    - type: physical
+      name: eth0
+      subnets:
+        - type: dhcp
+    - type: physical
+      name: eth1
+      subnets:
+        - type: dhcp
+    - type: physical
+      name: eth2
+    - type: physical
+      name: eth3
+    - type: physical
+      name: eth4
+    - type: physical
+      name: eth5
+    - type: bridge
+      name: br0
+      bridge_interfaces:
+        - eth2
+        - eth3
+      subnets:
+        - type: static
+          address: 192.168.50.1/24
+    - type: bond
+      name: bond0
+      bond_interfaces:
+        - eth4
+        - eth5
+      params:
+        bond-mode: 802.3ad
+        bond-mii-monitor-interval: 100
+        bond-lacp-rate: 1
+        bond-min-links: 1
+        bond-transmit-hash-policy: layer3+4
+    - type: vlan
+      name: bond0.10
+      vlan_link: bond0
+      vlan_id: 10 
+    - type: bridge
+      name: br-mgmt
+      bridge_interfaces:
+        - bond0.10
+      params:
+        bridge_stp: 'off'
+        bridge_waitport: 0
+        bridge_fd: 0
+      subnets:
+        - type: static
+          address: 172.29.236.1/22

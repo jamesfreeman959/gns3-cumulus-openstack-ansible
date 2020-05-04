@@ -1,0 +1,49 @@
+---
+# Because we have three haproxy nodes, we need
+# to one active LB IP, and we use keepalived for that.
+## Load Balancer Configuration (haproxy/keepalived)
+haproxy_keepalived_external_vip_cidr: "172.29.236.9/22"
+haproxy_keepalived_internal_vip_cidr: "172.29.236.0/22"
+haproxy_keepalived_external_interface: br-mgmt
+haproxy_keepalived_internal_interface: br-mgmt
+
+## Ceph cluster fsid (must be generated before first run)
+## Generate a uuid using: python -c 'import uuid; print(str(uuid.uuid4()))'
+generate_fsid: false
+fsid: 9522df76-07df-4ef0-b185-cd70be597687
+
+## Ceph - specify osd scenario - as of 4.0 only one is supported
+# see: https://docs.ceph.com/ceph-ansible/master/osds/scenarios.html
+#
+osd_scenario: lvm
+
+## ceph-ansible settings
+## See https://github.com/ceph/ceph-ansible/tree/master/group_vars for
+## additional configuration options available.
+monitor_address_block: "{{ cidr_networks.container }}"
+public_network: "{{ cidr_networks.container }}"
+cluster_network: "{{ cidr_networks.storage }}"
+journal_size: 10240 # size in MB
+# ceph-ansible automatically creates pools & keys for OpenStack services
+openstack_config: true
+cinder_ceph_client: cinder
+glance_ceph_client: glance
+glance_default_store: rbd
+glance_rbd_store_pool: images
+nova_libvirt_images_rbd_pool: vms
+
+cinder_backends:
+  RBD:
+    volume_driver: cinder.volume.drivers.rbd.RBDDriver
+    rbd_pool: volumes
+    rbd_ceph_conf: /etc/ceph/ceph.conf
+    rbd_store_chunk_size: 8
+    volume_backend_name: rbddriver
+    rbd_user: "{{ cinder_ceph_client }}"
+    rbd_secret_uuid: "{{ cinder_ceph_client_uuid }}"
+    report_discard_supported: true
+
+# The following makes the install work when the internal and external VIP are the same
+openstack_service_publicuri_proto: http
+openstack_external_ssl: false
+haproxy_ssl: false

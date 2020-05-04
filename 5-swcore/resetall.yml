@@ -1,0 +1,38 @@
+---
+- name: Configure spine01
+  hosts: spine01.example.org
+  become: true
+
+  tasks:
+    - name: Configure spine01
+      shell: "net del all && net commit"
+      ignore_errors: yes
+
+- name: Configure spine02
+  hosts: spine02.example.org
+  become: true
+
+  tasks:
+    - name: Configure spine02
+      shell: "net del all && net commit"
+      ignore_errors: yes
+
+- name: Configure leaf01
+  hosts: leaf01.example.org
+  become: true
+
+  tasks:
+    - name: Configure leaf01
+      shell: "net del all && net commit"
+      ignore_errors: yes
+
+- name: Configure leaf02
+  hosts: leaf02.example.org
+  become: true
+
+  tasks:
+    - name: Configure leaf02
+      shell: "net del all && net commit"
+      ignore_errors: yes
+
+

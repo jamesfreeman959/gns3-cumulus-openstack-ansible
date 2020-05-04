@@ -1,0 +1,91 @@
+---
+- name: Set up management station
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - bind9
+          - isc-dhcp-server
+          - iptables-persistent
+        state: present
+        update_cache: yes
+
+    - name: Deploy DHCPd defaults
+      copy:
+        src: files/isc-dhcp-server
+        dest: /etc/default/isc-dhcp-server
+      notify:
+        - Restart dhcpd
+
+    - name: Deploy DHCPd config
+      copy:
+        src: files/dhcpd.conf
+        dest: /etc/dhcp/dhcpd.conf
+      notify:
+        - Restart dhcpd
+
+    - name: Ensure IP forwarding is enabled
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+
+    - name: Install iptables forwarding rules
+      copy:
+        src: files/rules.v4
+        dest: /etc/iptables/rules.v4
+
+    - name: Install rc.local
+      copy:
+        src: files/rc.local
+        dest: /etc/rc.local
+        owner: root
+        group: root
+        mode: 0755
+      notify: Run rclocal
+
+    - name: Install Bind9 config
+      copy:
+        src: "{{ item }}"
+        dest: /etc/bind/
+        owner: root
+        group: root
+        mode: 0644
+      loop:
+        - "db.192.168.50"
+        - "db.172.29.236"
+        - "db.example.org"
+        - "named.conf.local"
+        - "named.conf.options"
+      notify:
+        - Restart Bind9
+
+    - name: Override DNS config to use local forwarder
+      copy:
+        src: files/resolved.conf
+        dest: /etc/systemd/resolved.conf
+      notify:
+        - Restart systemd-resolved
+
+  handlers:
+    - name: Restart dhcpd
+      service:
+        name: isc-dhcp-server
+        state: restarted
+        enabled: yes
+
+    - name: Restart Bind9
+      service:
+        name: bind9
+        state: restarted
+        enabled: yes
+
+    - name: Restart systemd-resolved
+      service:
+        name: systemd-resolved
+        state: restarted
+        
+    - name: Run rclocal
+      shell: /etc/rc.local

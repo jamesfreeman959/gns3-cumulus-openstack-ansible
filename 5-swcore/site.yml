@@ -1,0 +1,131 @@
+---
+- name: Configure spine01
+  hosts: spine01.example.org
+  become: true
+
+  tasks:
+    - name: Configure spine01
+      nclu:
+        commands:
+          - add clag peer sys-mac 44:38:39:FF:00:00 interface swp14-15 primary backup-ip 10.0.0.2
+          - add vlan 10,20,30
+          - add bridge stp treeprio 16384
+          - add clag port bond bond-leaf-01-02 interface swp1,swp2 clag-id 1
+        commit: true
+
+- name: Configure spine02
+  hosts: spine02.example.org
+  become: true
+
+  tasks:
+    - name: Configure spine02
+      nclu:
+        commands:
+          - add clag peer sys-mac 44:38:39:FF:00:00 interface swp14-15 primary backup-ip 10.0.0.1
+          - add vlan 10,20,30
+          - add bridge stp treeprio 16384
+          - add clag port bond bond-leaf-01-02 interface swp1,swp2 clag-id 1
+        commit: true
+
+- name: Configure leaf01
+  hosts: leaf01.example.org
+  become: true
+
+  tasks:
+    - name: Configure leaf01
+      nclu:
+        commands:
+          - add clag peer sys-mac 44:38:39:FF:00:01 interface swp44-45 primary backup-ip 10.0.1.2
+          - add vlan 10,20,30
+          - add clag port bond bond-to-spines interface swp46-47 clag-id 100
+          - add clag port bond bond-to-infra1m interface swp3 clag-id 3
+          - add bond bond-to-infra1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra1v interface swp4 clag-id 4
+          - add bond bond-to-infra1v bridge trunk vlans 30
+          - add clag port bond bond-to-infra2m interface swp5 clag-id 5
+          - add bond bond-to-infra2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra2v interface swp6 clag-id 6
+          - add bond bond-to-infra2v bridge trunk vlans 30
+          - add clag port bond bond-to-infra3m interface swp7 clag-id 7
+          - add bond bond-to-infra3m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra3v interface swp8 clag-id 8
+          - add bond bond-to-infra3v bridge trunk vlans 30
+          - add clag port bond bond-to-log1m interface swp9 clag-id 9
+          - add bond bond-to-log1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-log1v interface swp10 clag-id 10
+          - add bond bond-to-log1v bridge trunk vlans 30
+          - add clag port bond bond-to-comp1m interface swp11 clag-id 11
+          - add bond bond-to-comp1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-comp1v interface swp12 clag-id 12
+          - add bond bond-to-comp1v bridge trunk vlans 30
+          - add clag port bond bond-to-comp2m interface swp13 clag-id 13
+          - add bond bond-to-comp2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-comp2v interface swp14 clag-id 14
+          - add bond bond-to-comp2v bridge trunk vlans 30
+          - add clag port bond bond-to-osd1m interface swp15 clag-id 15
+          - add bond bond-to-osd1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd1v interface swp16 clag-id 16
+          - add bond bond-to-osd1v bridge trunk vlans 30
+          - add clag port bond bond-to-osd2m interface swp17 clag-id 17
+          - add bond bond-to-osd2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd2v interface swp18 clag-id 18
+          - add bond bond-to-osd2v bridge trunk vlans 30
+          - add clag port bond bond-to-osd3m interface swp19 clag-id 19
+          - add bond bond-to-osd3m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd3v interface swp20 clag-id 20
+          - add bond bond-to-osd3v bridge trunk vlans 30
+# Only if you want untagged frames on VLAN 10          
+#          - add bond bond-to-server1 bridge pvid 10
+        commit: true
+
+- name: Configure leaf02
+  hosts: leaf02.example.org
+  become: true
+
+  tasks:
+    - name: Configure leaf02
+      nclu:
+        commands:
+          - add clag peer sys-mac 44:38:39:FF:00:01 interface swp44-45 primary backup-ip 10.0.1.1
+          - add vlan 10,20,30
+          - add clag port bond bond-to-spines interface swp46-47 clag-id 100
+          - add clag port bond bond-to-infra1m interface swp3 clag-id 3
+          - add bond bond-to-infra1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra1v interface swp4 clag-id 4
+          - add bond bond-to-infra1v bridge trunk vlans 30
+          - add clag port bond bond-to-infra2m interface swp5 clag-id 5
+          - add bond bond-to-infra2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra2v interface swp6 clag-id 6
+          - add bond bond-to-infra2v bridge trunk vlans 30
+          - add clag port bond bond-to-infra3m interface swp7 clag-id 7
+          - add bond bond-to-infra3m bridge trunk vlans 10,20
+          - add clag port bond bond-to-infra3v interface swp8 clag-id 8
+          - add bond bond-to-infra3v bridge trunk vlans 30
+          - add clag port bond bond-to-log1m interface swp9 clag-id 9
+          - add bond bond-to-log1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-log1v interface swp10 clag-id 10
+          - add bond bond-to-log1v bridge trunk vlans 30
+          - add clag port bond bond-to-comp1m interface swp11 clag-id 11
+          - add bond bond-to-comp1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-comp1v interface swp12 clag-id 12
+          - add bond bond-to-comp1v bridge trunk vlans 30
+          - add clag port bond bond-to-comp2m interface swp13 clag-id 13
+          - add bond bond-to-comp2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-comp2v interface swp14 clag-id 14
+          - add bond bond-to-comp2v bridge trunk vlans 30
+          - add clag port bond bond-to-osd1m interface swp15 clag-id 15
+          - add bond bond-to-osd1m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd1v interface swp16 clag-id 16
+          - add bond bond-to-osd1v bridge trunk vlans 30
+          - add clag port bond bond-to-osd2m interface swp17 clag-id 17
+          - add bond bond-to-osd2m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd2v interface swp18 clag-id 18
+          - add bond bond-to-osd2v bridge trunk vlans 30
+          - add clag port bond bond-to-osd3m interface swp19 clag-id 19
+          - add bond bond-to-osd3m bridge trunk vlans 10,20
+          - add clag port bond bond-to-osd3v interface swp20 clag-id 20
+          - add bond bond-to-osd3v bridge trunk vlans 30
+# Only if you want untagged frames on VLAN 10          
+#          - add bond bond-to-server1 bridge pvid 10
+        commit: true
+

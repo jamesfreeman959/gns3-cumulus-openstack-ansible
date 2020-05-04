@@ -1,0 +1,1 @@
+swmgmt.example.org ansible_user=cumulus ansible_password=CumulusLinux! ansible_become_password=CumulusLinux!

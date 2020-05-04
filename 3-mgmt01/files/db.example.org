@@ -1,0 +1,39 @@
+$TTL	604800
+@	IN	SOA	mgmt01.example.org.	admin.example.org. (
+		3	; Serial
+		604800	; Refresh
+		86400	; Retry
+		2419200	; Expire
+		604800 )	; Negative Cache TTL
+
+;
+; name servers - NS records
+	IN	NS	mgmt01.example.org.
+
+; name servers - A records
+mgmt01.example.org.	IN	A	192.168.50.1
+
+; other A records
+swmgmt.example.org.	IN	A	192.168.50.2
+spine01.example.org.	IN	A	192.168.50.3
+spine02.example.org.	IN	A	192.168.50.4
+leaf01.example.org.	IN	A	192.168.50.5
+leaf02.example.org.	IN	A	192.168.50.6
+
+server01.example.org.	IN	A	192.168.50.201
+server02.example.org.	IN	A	192.168.50.202
+router1.example.org.	IN	A	192.168.50.203
+
+infra1.example.org.		IN	A	172.29.236.11
+infra2.example.org.		IN	A	172.29.236.12
+infra3.example.org.		IN	A	172.29.236.13
+log1.example.org.		IN	A	172.29.236.14
+compute1.example.org.	IN	A	172.29.236.16
+compute2.example.org.	IN	A	172.29.236.17
+osd1.example.org.	IN	A	172.29.236.18
+osd2.example.org.	IN	A	172.29.236.19
+osd3.example.org.	IN	A	172.29.236.20
+
+
+openstack.example.org.	IN	A	172.29.236.9
+

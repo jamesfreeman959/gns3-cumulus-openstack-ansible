@@ -1,0 +1,24 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+zone "example.org" {
+	type master;
+	file "/etc/bind/db.example.org";
+	allow-transfer { none; };
+};
+
+zone "50.168.192.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.192.168.50";
+	allow-transfer { none; };
+};
+
+zone "236.29.172.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.172.29.236";
+	allow-transfer { none; };
+};

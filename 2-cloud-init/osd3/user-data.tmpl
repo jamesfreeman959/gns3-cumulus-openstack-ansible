@@ -1,0 +1,23 @@
+#cloud-config
+password: ubuntu
+# The default user account on Ubuntu is "ubuntu"
+chpasswd: { expire: False }
+ssh_pwauth: True
+ssh_authorized_keys:
+  - zzz_ssh_pubkey
+- content: |
+      #!/bin/sh
+      sleep 10
+      chown -R ubuntu:ubuntu /home/ubuntu
+      # Install Python or we can't run any Ansible!
+      apt update
+      apt -y install python
+      # Prevent rc.local running on the next boot
+      chmod -x /etc/rc.local
+  path: /etc/rc.local
+  permissions: '0755'
+runcmd:
+  - sed -i.bak 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 bios.devname=0"/' /etc/default/grub
+  - update-grub
+  - reboot
+

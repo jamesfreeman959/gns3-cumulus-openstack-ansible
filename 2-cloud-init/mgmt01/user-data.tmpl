@@ -1,0 +1,50 @@
+#cloud-config
+password: ubuntu
+# The default user account on Ubuntu is "ubuntu"
+chpasswd: { expire: False }
+ssh_pwauth: True
+ssh_authorized_keys:
+  - zzz_ssh_pubkey
+write_files:
+- content: |
+      zzz_ssh_privkey
+  path: /home/ubuntu/mgmtnet-priv-key
+# When this part of the process is run, the ubuntu account hasn't been created so it will error.
+# Permissions can be changed later in a runcmd
+#  owner: ubuntu:ubuntu
+- content: |
+      [Match]
+      Name=eth1
+      
+      [Network]
+      DHCP=ipv4
+      LinkLocalAddressing=ipv6
+      
+      [DHCP]
+      RouteMetric=100
+      UseMTU=true
+      UseRoutes=false
+  path: /etc/systemd/network/10-netplan-eth1.network
+  permissions: '0644'
+  # The above is an override for the DHCP options of Netplan as cloud-init can't affect this change yet
+  # If eth1 ceases to be DHCP, or needs a default gateway, change this file!
+- content: |
+      #!/bin/sh
+      sleep 10
+      apt update
+      apt -y install git bridge-utils
+      git clone https://github.com/jamesfreeman959/gns3-cumulus-openstack-ansible.git /home/ubuntu/gns3-cumulus-openstack-ansible
+      # To compensate for write_file ownership issues
+      chown -R ubuntu:ubuntu /home/ubuntu
+      apt install software-properties-common
+      apt-add-repository --yes --update ppa:ansible/ansible
+      apt -y install ansible
+      # Prevent rc.local running on the next boot
+      chmod -x /etc/rc.local
+  path: /etc/rc.local
+  permissions: '0755'
+runcmd:
+  - sed -i.bak 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 bios.devname=0"/' /etc/default/grub
+  - update-grub
+  - reboot
+

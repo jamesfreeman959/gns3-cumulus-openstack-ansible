@@ -1,0 +1,22 @@
+$TTL    604800
+@       IN      SOA     mgmt01.example.org. admin.example.org. (
+                              3         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+; name servers
+      IN      NS      mgmt01.example.org.
+
+; PTR Records
+9	IN	PTR	openstack.example.org.
+11	IN	PTR	infra1.example.org.
+12	IN	PTR	infra2.example.org.
+13	IN	PTR	infra3.example.org.
+14	IN	PTR	log1.example.org.
+16	IN	PTR	compute1.example.org.
+17	IN	PTR	compute2.example.org.
+18	IN	PTR	osd1.example.org.
+19	IN	PTR	osd2.example.org.
+20	IN	PTR	osd3.example.org.
+
